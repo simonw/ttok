@@ -33,5 +33,5 @@ setup(
     """,
     install_requires=["click", "tiktoken"],
     extras_require={"test": ["pytest", "cogapp"]},
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 )
