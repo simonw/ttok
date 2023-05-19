@@ -15,6 +15,8 @@ This tool can count tokens, using OpenAI's [tiktoken](https://github.com/openai/
 
 It can also truncate text to a specified number of tokens.
 
+See [llm, ttok and strip-tags—CLI tools for working with ChatGPT and other LLMs](https://simonwillison.net/2023/May/18/cli-tools-for-llms/) for more on this project.
+
 ## Installation
 
 Install this tool using `pip`:
@@ -33,7 +35,7 @@ ttok Hello world
 ```
 You can also pipe text into the tool:
 ```bash
-echo -n "Hello world" -n | ttok
+echo -n "Hello world" | ttok
 ```
 ```
 2
@@ -43,7 +45,7 @@ Here the `echo -n` option prevents echo from adding a newline - without that you
 To pipe in text and then append extra tokens from arguments, use the `-i -` option:
 
 ```bash
-echo -n "Hello world" -n | ttok more text -i -
+echo -n "Hello world" | ttok more text -i -
 ```
 ```
 6
