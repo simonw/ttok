@@ -4,28 +4,36 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "args,expected,expected_tokens",
+    "args,expected_length,expected_tokens",
     (
-        (["one"], "1\n", "606"),
-        (["one", "two"], "2\n", "606 1403"),
-        (["boo", "hello", "there", "this", "is"], "5\n", "34093 24748 1070 420 374"),
+        (["one"], 1, "606"),
+        (["one", "two"], 2, "606 1403"),
+        (["boo", "hello", "there", "this", "is"], 5, "34093 24748 1070 420 374"),
         (
             ["boo", "hello", "there", "this", "is", "-m", "gpt2"],
-            "6\n",
+            6,
             "2127 78 23748 612 428 318",
         ),
     ),
 )
-def test_ttok_count_and_tokens(args, expected, expected_tokens):
+def test_ttok_count_and_tokens(args, expected_length, expected_tokens):
     runner = CliRunner()
     with runner.isolated_filesystem():
         result = runner.invoke(cli, args)
         assert result.exit_code == 0
-        assert result.output == expected
-        # Now with --tokens
+        assert int(result.output.strip()) == expected_length
+
+        # Now try with --tokens
         result2 = runner.invoke(cli, args + ["--tokens"])
         assert result2.exit_code == 0
         assert result2.output.strip() == expected_tokens
+
+        # And try round-tripping it
+        as_text = runner.invoke(cli, ["--decode"], input=expected_tokens)
+        assert as_text.exit_code == 0
+        as_tokens_again = runner.invoke(cli, ["--encode"], input=as_text.output.strip())
+        assert as_tokens_again.exit_code == 0
+        assert as_tokens_again.output.strip() == expected_tokens
 
 
 @pytest.mark.parametrize("use_stdin", (True, False))

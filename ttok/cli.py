@@ -1,5 +1,6 @@
 import click
 import json
+import re
 import sys
 import tiktoken
 
@@ -16,8 +17,13 @@ import tiktoken
     "-0", "--null", is_flag=True, help="Output split text with null byte delimiters"
 )
 @click.option("-m", "--model", default="gpt-3.5-turbo", help="Which model to use")
-@click.option("output_tokens", "--tokens", is_flag=True, help="Output token integers")
-def cli(prompt, input, truncate, split, null, model, output_tokens):
+@click.option(
+    "encode_tokens", "--encode", "--tokens", is_flag=True, help="Output token integers"
+)
+@click.option(
+    "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
+)
+def cli(prompt, input, truncate, split, null, model, encode_tokens, decode_tokens):
     """
     Count and truncate text based on tokens
 
@@ -37,10 +43,16 @@ def cli(prompt, input, truncate, split, null, model, output_tokens):
 
         cat input.txt | ttok -t 100 -m gpt2
 
-    To view tokens:
+    To view tokens integers:
 
         cat input.txt | ttok --tokens
+
+    To convert tokens back to text:
+
+        ttok 9906 1917 --decode
     """
+    if decode_tokens and encode_tokens:
+        raise click.ClickException("Cannot use --decode with --encode")
     if split and not truncate:
         raise click.ClickException("Cannot use --split without --truncate")
     try:
@@ -56,6 +68,12 @@ def cli(prompt, input, truncate, split, null, model, output_tokens):
             text = input_text + " " + text
         else:
             text = input_text
+
+    if decode_tokens:
+        integer_tokens = [int(token) for token in re.findall(r"\d+", text)]
+        click.echo(encoding.decode(integer_tokens))
+        return
+
     # Tokenize it
     tokens = encoding.encode(text)
 
@@ -70,7 +88,7 @@ def cli(prompt, input, truncate, split, null, model, output_tokens):
                 "\0".join(encoding.decode(chunk) for chunk in token_chunks) + "\0"
             )
         else:
-            if output_tokens:
+            if encode_tokens:
                 click.echo(json.dumps(token_chunks, indent=2))
             else:
                 click.echo(
@@ -83,7 +101,7 @@ def cli(prompt, input, truncate, split, null, model, output_tokens):
     if truncate:
         tokens = tokens[:truncate]
 
-    if output_tokens:
+    if encode_tokens:
         click.echo(" ".join(str(t) for t in tokens))
     elif truncate:
         click.echo(encoding.decode(tokens), nl=False)
