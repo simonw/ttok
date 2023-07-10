@@ -127,16 +127,21 @@ Usage: ttok [OPTIONS] [PROMPT]...
 
       cat input.txt | ttok -t 100 -m gpt2
 
-  To view tokens:
+  To view token integers:
 
-      cat input.txt | ttok --tokens
+      cat input.txt | ttok --encode
+
+  To convert tokens back to text:
+
+      ttok 9906 1917 --decode
 
 Options:
   --version               Show the version and exit.
   -i, --input FILENAME
   -t, --truncate INTEGER  Truncate to this many tokens
   -m, --model TEXT        Which model to use
-  --tokens                Output token integers
+  --encode, --tokens      Output token integers
+  --decode                Convert token integers to text
   --help                  Show this message and exit.
 
 ```

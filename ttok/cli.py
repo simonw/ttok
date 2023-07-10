@@ -1,4 +1,5 @@
 import click
+import re
 import sys
 import tiktoken
 
@@ -11,8 +12,13 @@ import tiktoken
     "-t", "--truncate", "truncate", type=int, help="Truncate to this many tokens"
 )
 @click.option("-m", "--model", default="gpt-3.5-turbo", help="Which model to use")
-@click.option("output_tokens", "--tokens", is_flag=True, help="Output token integers")
-def cli(prompt, input, truncate, model, output_tokens):
+@click.option(
+    "encode_tokens", "--encode", "--tokens", is_flag=True, help="Output token integers"
+)
+@click.option(
+    "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
+)
+def cli(prompt, input, truncate, model, encode_tokens, decode_tokens):
     """
     Count and truncate text based on tokens
 
@@ -32,10 +38,16 @@ def cli(prompt, input, truncate, model, output_tokens):
 
         cat input.txt | ttok -t 100 -m gpt2
 
-    To view tokens:
+    To view token integers:
 
-        cat input.txt | ttok --tokens
+        cat input.txt | ttok --encode
+
+    To convert tokens back to text:
+
+        ttok 9906 1917 --decode
     """
+    if decode_tokens and encode_tokens:
+        raise click.ClickException("Cannot use --decode with --encode")
     try:
         encoding = tiktoken.encoding_for_model(model)
     except KeyError as e:
@@ -49,12 +61,18 @@ def cli(prompt, input, truncate, model, output_tokens):
             text = input_text + " " + text
         else:
             text = input_text
+
+    if decode_tokens:
+        integer_tokens = [int(token) for token in re.findall(r"\d+", text)]
+        click.echo(encoding.decode(integer_tokens))
+        return
+
     # Tokenize it
     tokens = encoding.encode(text)
     if truncate:
         tokens = tokens[:truncate]
 
-    if output_tokens:
+    if encode_tokens:
         click.echo(" ".join(str(t) for t in tokens))
     elif truncate:
         click.echo(encoding.decode(tokens), nl=False)
