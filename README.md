@@ -84,13 +84,29 @@ This is too
 
 ## Viewing tokens
 
-The `--tokens` option can be used to view the integer token IDs for the incoming text:
+The `--encode` option can be used to view the integer token IDs for the incoming text:
 
 ```bash
-ttok Hello world --tokens
+ttok Hello world --encode
 ```
 ```
 9906 1917
+```
+The `--decode` method reverses this process:
+
+```bash
+ttok 9906 1917 --decode
+```
+```
+Hello world
+```
+Add `--tokens` to either of these options to see a detailed breakdown of the tokens:
+
+```bash
+ttok Hello world --encode --tokens
+```
+```
+[<Token 9906 (hello)>, <Token 1917 ( world)>]
 ```
 
 ## ttok --help
@@ -135,6 +151,14 @@ Usage: ttok [OPTIONS] [PROMPT]...
 
       ttok 9906 1917 --decode
 
+  To see the details of the tokens:
+
+      ttok "hello world" --tokens
+
+  Outputs:
+
+      [b'hello', b' world']
+
 Options:
   --version               Show the version and exit.
   -i, --input FILENAME
@@ -142,6 +166,7 @@ Options:
   -m, --model TEXT        Which model to use
   --encode, --tokens      Output token integers
   --decode                Convert token integers to text
+  --tokens                Output full tokens
   --help                  Show this message and exit.
 
 ```

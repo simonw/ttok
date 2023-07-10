@@ -18,7 +18,8 @@ import tiktoken
 @click.option(
     "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
 )
-def cli(prompt, input, truncate, model, encode_tokens, decode_tokens):
+@click.option("as_tokens", "--tokens", is_flag=True, help="Output full tokens")
+def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens):
     """
     Count and truncate text based on tokens
 
@@ -45,9 +46,19 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens):
     To convert tokens back to text:
 
         ttok 9906 1917 --decode
+
+    To see the details of the tokens:
+
+        ttok "hello world" --tokens
+
+    Outputs:
+
+        [b'hello', b' world']
     """
     if decode_tokens and encode_tokens:
         raise click.ClickException("Cannot use --decode with --encode")
+    if as_tokens and not decode_tokens and not encode_tokens:
+        encode_tokens = True
     try:
         encoding = tiktoken.encoding_for_model(model)
     except KeyError as e:
@@ -63,8 +74,11 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens):
             text = input_text
 
     if decode_tokens:
-        integer_tokens = [int(token) for token in re.findall(r"\d+", text)]
-        click.echo(encoding.decode(integer_tokens))
+        tokens = [int(token) for token in re.findall(r"\d+", text)]
+        if as_tokens:
+            click.echo(encoding.decode_tokens_bytes(tokens))
+        else:
+            click.echo(encoding.decode(tokens))
         return
 
     # Tokenize it
@@ -73,7 +87,10 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens):
         tokens = tokens[:truncate]
 
     if encode_tokens:
-        click.echo(" ".join(str(t) for t in tokens))
+        if as_tokens:
+            click.echo(encoding.decode_tokens_bytes(tokens))
+        else:
+            click.echo(" ".join(str(t) for t in tokens))
     elif truncate:
         click.echo(encoding.decode(tokens), nl=False)
     else:
