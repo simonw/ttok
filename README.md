@@ -106,7 +106,7 @@ Add `--tokens` to either of these options to see a detailed breakdown of the tok
 ttok Hello world --encode --tokens
 ```
 ```
-[<Token 9906 (hello)>, <Token 1917 ( world)>]
+[b'Hello', b' world']
 ```
 
 ## ttok --help
