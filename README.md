@@ -20,8 +20,13 @@ See [llm, ttok and strip-tags—CLI tools for working with ChatGPT and other LLM
 ## Installation
 
 Install this tool using `pip`:
-
-    pip install ttok
+```bash
+pip install ttok
+```
+Or using Homebrew:
+```bash
+brew install simonw/llm/ttok
+```
 
 ## Counting tokens
 
