@@ -18,8 +18,11 @@ import tiktoken
 @click.option(
     "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
 )
+@click.option(
+    "allowed_special", "--allowed-special", help="Allowed special tokens", multiple=True
+)
 @click.option("as_tokens", "--tokens", is_flag=True, help="Output full tokens")
-def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens):
+def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, allowed_special, as_tokens):
     """
     Count and truncate text based on tokens
 
@@ -82,7 +85,7 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens)
         return
 
     # Tokenize it
-    tokens = encoding.encode(text)
+    tokens = encoding.encode(text, allowed_special=set(list(allowed_special)))
     if truncate:
         tokens = tokens[:truncate]
 
