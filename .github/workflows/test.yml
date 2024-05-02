@@ -27,4 +27,4 @@ jobs:
         pytest
     - name: Check if README is up-to-date
       run: |
-        cog --check README.md
+        cog --check README.md || (cog -r README.md && git diff && exit 1)
