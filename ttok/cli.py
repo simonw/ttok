@@ -19,7 +19,17 @@ import tiktoken
     "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
 )
 @click.option("as_tokens", "--tokens", is_flag=True, help="Output full tokens")
-def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens):
+@click.option("--allow-special", is_flag=True, help="Do not error on special tokens")
+def cli(
+    prompt,
+    input,
+    truncate,
+    model,
+    encode_tokens,
+    decode_tokens,
+    as_tokens,
+    allow_special,
+):
     """
     Count and truncate text based on tokens
 
@@ -57,6 +67,10 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens)
     """
     if decode_tokens and encode_tokens:
         raise click.ClickException("Cannot use --decode with --encode")
+    if allow_special and not (encode_tokens or as_tokens):
+        raise click.ClickException(
+            "Cannot use --allow-special without --encode or --tokens"
+        )
     if as_tokens and not decode_tokens and not encode_tokens:
         encode_tokens = True
     try:
@@ -82,7 +96,20 @@ def cli(prompt, input, truncate, model, encode_tokens, decode_tokens, as_tokens)
         return
 
     # Tokenize it
-    tokens = encoding.encode(text)
+    kwargs = {}
+    if allow_special:
+        kwargs["allowed_special"] = "all"
+    try:
+        tokens = encoding.encode(text, **kwargs)
+    except ValueError as ex:
+        ex_str = str(ex)
+        if "disallowed special token" in ex_str and not allow_special:
+            # Just the first line, then add a hint
+            ex_str = (
+                ex_str.split("\n")[0]
+                + "\n\nUse --allow-special to allow special tokens"
+            )
+        raise click.ClickException(ex_str)
     if truncate:
         tokens = tokens[:truncate]
 

@@ -217,6 +217,7 @@ Options:
   --encode, --tokens      Output token integers
   --decode                Convert token integers to text
   --tokens                Output full tokens
+  --allow-special         Do not error on special tokens
   --help                  Show this message and exit.
 
 ```

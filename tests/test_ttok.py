@@ -94,3 +94,16 @@ def test_ttok_file(use_stdin, use_extra_args):
         result = runner.invoke(cli, args, **kwargs)
         assert result.exit_code == 0
         assert result.output.strip() == str(expected_count)
+
+
+def test_ttok_special_tokens():
+    # https://github.com/simonw/ttok/issues/13
+    runner = CliRunner()
+    # Without --allow-special raises an error
+    result = runner.invoke(cli, ["<|endoftext|>", "--encode"])
+    assert result.exit_code != 0
+    assert "Use --allow-special to allow special tokens" in result.output
+    # With --allow-special it works
+    result = runner.invoke(cli, ["<|endoftext|>", "--encode", "--allow-special"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "100257"
