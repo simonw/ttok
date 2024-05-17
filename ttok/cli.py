@@ -73,10 +73,7 @@ def cli(
         )
     if as_tokens and not decode_tokens and not encode_tokens:
         encode_tokens = True
-    try:
-        encoding = tiktoken.encoding_for_model(model)
-    except KeyError as e:
-        raise click.ClickException(f"Invalid model: {model}") from e
+
     if not prompt and input is None:
         input = sys.stdin
     text = " ".join(prompt)
@@ -86,6 +83,43 @@ def cli(
             text = input_text + " " + text
         else:
             text = input_text
+
+    if model.startswith("hf:"):
+        # We use Hugging Face tokenizers instead
+        try:
+            import tokenizers
+        except ImportError:
+            raise click.ClickException("Hugging Face tokenizers is not installed")
+
+        hf_tokenizer = tokenizers.Tokenizer.from_pretrained(model[3:])
+        if decode_tokens:
+            tokens = [int(token) for token in re.findall(r"\d+", text)]
+            if as_tokens:
+                click.echo(hf_tokenizer.decode(tokens))
+            else:
+                click.echo(hf_tokenizer.decode(tokens))
+            return
+        else:
+            tokens = hf_tokenizer.encode(text).ids
+            if truncate:
+                tokens = tokens[:truncate]
+
+            if encode_tokens:
+                if as_tokens:
+                    click.echo(hf_tokenizer.decode(tokens))
+                else:
+                    click.echo(" ".join(str(t) for t in tokens))
+            elif truncate:
+                click.echo(hf_tokenizer.decode(tokens), nl=False)
+            else:
+                click.echo(len(tokens))
+            return
+
+    # Use tiktoken for OpenAI tokenizers instead
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+    except KeyError as e:
+        raise click.ClickException(f"Invalid model: {model}") from e
 
     if decode_tokens:
         tokens = [int(token) for token in re.findall(r"\d+", text)]
