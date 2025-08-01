@@ -13,7 +13,7 @@ import tiktoken
 )
 @click.option("-m", "--model", default="gpt-3.5-turbo", help="Which model to use")
 @click.option(
-    "encode_tokens", "--encode", "--tokens", is_flag=True, help="Output token integers"
+    "encode_tokens", "--encode", is_flag=True, help="Output token integers"
 )
 @click.option(
     "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
