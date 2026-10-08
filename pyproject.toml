@@ -1,6 +1,6 @@
 [project]
 name = "ttok"
-version = "0.3"
+version = "0.4"
 description = "Count and truncate text based on tokens"
 readme = "README.md"
 requires-python = ">=3.10"
