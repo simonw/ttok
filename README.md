@@ -221,7 +221,7 @@ Options:
   -i, --input FILENAME
   -t, --truncate INTEGER  Truncate to this many tokens
   -m, --model TEXT        Which model to use
-  --encode, --tokens      Output token integers
+  --encode                Output token integers
   --decode                Convert token integers to text
   --tokens                Output full tokens
   --allow-special         Do not error on special tokens
