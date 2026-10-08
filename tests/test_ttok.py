@@ -61,6 +61,9 @@ def test_ttok_count_and_tokens(args, expected_length, expected_tokens):
             [b"86127", b"15682", b"48864", b"21990", b"38641", "--decode", "--tokens"],
             "[b'\\xe7\\xa7\\x81', b'\\xe3\\x81\\xaf', b'\\xe5\\xad\\xa6', b'\\xe7\\x94\\x9f', b'\\xe3\\x81\\xa7\\xe3\\x81\\x99']",
         ),
+        (["hello", "big", "world", "out", "there", "--tokens", "--chunksize", "2"], "[b'hello', b' big']\n[b' world', b' out']\n[b' there']"),
+        (["hello", "big", "world", "out", "there", "--chunksize", "2"], "hello big\n world out\n there"),
+        (["hello", "big", "world", "out", "there", "--encode", "--chunksize", "2"], "15339 2466\n1917 704\n1070"),
     ),
 )
 def test_ttok_decode_encode_tokens(args, expected):
