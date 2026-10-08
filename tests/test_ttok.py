@@ -107,3 +107,22 @@ def test_ttok_special_tokens():
     result = runner.invoke(cli, ["<|endoftext|>", "--encode", "--allow-special"])
     assert result.exit_code == 0
     assert result.output.strip() == "100257"
+
+
+def test_ttok_special_tokens_count_and_truncate():
+    # https://github.com/simonw/ttok/issues/17
+    runner = CliRunner()
+    # Counting without --allow-special raises an error
+    result = runner.invoke(cli, ["hello <|endoftext|> world"])
+    assert result.exit_code != 0
+    assert "Use --allow-special to allow special tokens" in result.output
+    # Counting with --allow-special works
+    result = runner.invoke(cli, ["hello <|endoftext|> world", "--allow-special"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "4"
+    # Truncating with --allow-special works
+    result = runner.invoke(
+        cli, ["hello <|endoftext|> world", "--allow-special", "-t", "3"]
+    )
+    assert result.exit_code == 0
+    assert result.output == "hello <|endoftext|>"

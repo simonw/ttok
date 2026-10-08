@@ -65,10 +65,6 @@ def cli(
     """
     if decode_tokens and encode_tokens:
         raise click.ClickException("Cannot use --decode with --encode")
-    if allow_special and not (encode_tokens or as_tokens):
-        raise click.ClickException(
-            "Cannot use --allow-special without --encode or --tokens"
-        )
     if as_tokens and not decode_tokens and not encode_tokens:
         encode_tokens = True
     try:
