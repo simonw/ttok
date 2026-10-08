@@ -126,6 +126,12 @@ for key, value in tiktoken.model.MODEL_TO_ENCODING.items():
     output.append("- `{}` (`{}`)".format(key, value))
 cog.out("\n".join(output))
 ]]] -->
+- `o1` (`o200k_base`)
+- `o3` (`o200k_base`)
+- `o4-mini` (`o200k_base`)
+- `gpt-5` (`o200k_base`)
+- `gpt-4.1` (`o200k_base`)
+- `gpt-4o` (`o200k_base`)
 - `gpt-4` (`cl100k_base`)
 - `gpt-3.5-turbo` (`cl100k_base`)
 - `gpt-3.5` (`cl100k_base`)
@@ -221,7 +227,7 @@ Options:
   -i, --input FILENAME
   -t, --truncate INTEGER  Truncate to this many tokens
   -m, --model TEXT        Which model to use
-  --encode, --tokens      Output token integers
+  --encode                Output token integers
   --decode                Convert token integers to text
   --tokens                Output full tokens
   --allow-special         Do not error on special tokens
