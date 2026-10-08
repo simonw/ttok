@@ -116,7 +116,9 @@ ttok Hello world --encode --tokens
 
 ## Available models
 
-This is the full list of available models and their corresponding encodings. Model names and encoding names are valid for the `-m/--model` option.
+This is the full list of available models and their corresponding encodings. Model names are valid for the `-m/--model` option.
+
+Run `ttok --list-models` to see the models supported by your installed version of `tiktoken`.
 
 <!-- [[[cog
 import cog
@@ -222,6 +224,10 @@ Usage: ttok [OPTIONS] [PROMPT]...
 
       [b'hello', b' world']
 
+  To list the available models:
+
+      ttok --list-models
+
 Options:
   --version               Show the version and exit.
   -i, --input FILENAME
@@ -231,6 +237,7 @@ Options:
   --decode                Convert token integers to text
   --tokens                Output full tokens
   --allow-special         Do not error on special tokens
+  --list-models           List available models and exit
   --help                  Show this message and exit.
 
 ```

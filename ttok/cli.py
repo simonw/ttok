@@ -18,6 +18,7 @@ import tiktoken
 )
 @click.option("as_tokens", "--tokens", is_flag=True, help="Output full tokens")
 @click.option("--allow-special", is_flag=True, help="Do not error on special tokens")
+@click.option("--list-models", is_flag=True, help="List available models and exit")
 def cli(
     prompt,
     input,
@@ -27,6 +28,7 @@ def cli(
     decode_tokens,
     as_tokens,
     allow_special,
+    list_models,
 ):
     """
     Count and truncate text based on tokens
@@ -62,7 +64,15 @@ def cli(
     Outputs:
 
         [b'hello', b' world']
+
+    To list the available models:
+
+        ttok --list-models
     """
+    if list_models:
+        for model_name, encoding_name in tiktoken.model.MODEL_TO_ENCODING.items():
+            click.echo(f"{model_name} ({encoding_name})")
+        return
     if decode_tokens and encode_tokens:
         raise click.ClickException("Cannot use --decode with --encode")
     if as_tokens and not decode_tokens and not encode_tokens:

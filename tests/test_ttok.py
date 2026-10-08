@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 from ttok.cli import cli
 import pytest
+import tiktoken
 
 
 @pytest.mark.parametrize(
@@ -126,3 +127,16 @@ def test_ttok_special_tokens_count_and_truncate():
     )
     assert result.exit_code == 0
     assert result.output == "hello <|endoftext|>"
+
+
+def test_ttok_list_models():
+    # https://github.com/simonw/ttok/issues/18
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--list-models"])
+    assert result.exit_code == 0
+    lines = result.output.strip().split("\n")
+    assert lines == [
+        f"{model} ({encoding})"
+        for model, encoding in tiktoken.model.MODEL_TO_ENCODING.items()
+    ]
+    assert "gpt-4o (o200k_base)" in lines
