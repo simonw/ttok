@@ -3,7 +3,7 @@ name = "ttok"
 version = "0.3"
 description = "Count and truncate text based on tokens"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [{name = "Simon Willison"}]
 license = "Apache-2.0"
 license-files = ["LICENSE"]
