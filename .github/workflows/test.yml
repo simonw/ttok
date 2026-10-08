@@ -13,18 +13,14 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+    - name: Set up uv and Python ${{ matrix.python-version }}
+      uses: astral-sh/setup-uv@v6
       with:
         python-version: ${{ matrix.python-version }}
-        cache: pip
-        cache-dependency-path: setup.py
-    - name: Install dependencies
-      run: |
-        pip install '.[test]'
+        enable-cache: true
     - name: Run tests
       run: |
-        pytest
+        uv run pytest
     - name: Check if README is up-to-date
       run: |
-        cog --check README.md || (cog -r README.md && git diff && exit 1)
+        uv run cog --check README.md || (uv run cog -r README.md && git diff && exit 1)

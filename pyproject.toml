@@ -1,0 +1,35 @@
+[project]
+name = "ttok"
+version = "0.3"
+description = "Count and truncate text based on tokens"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "Simon Willison"}]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = [
+    "click",
+    "tiktoken",
+]
+
+[project.urls]
+Homepage = "https://github.com/simonw/ttok"
+Issues = "https://github.com/simonw/ttok/issues"
+CI = "https://github.com/simonw/ttok/actions"
+Changelog = "https://github.com/simonw/ttok/releases"
+
+[project.scripts]
+ttok = "ttok.cli:cli"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "cogapp",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
