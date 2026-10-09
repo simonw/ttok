@@ -11,7 +11,9 @@ import tiktoken
 @click.option(
     "-t", "--truncate", "truncate", type=int, help="Truncate to this many tokens"
 )
-@click.option("-m", "--model", default="gpt-3.5-turbo", help="Which model to use")
+@click.option(
+    "-m", "--model", default="gpt-5", show_default=True, help="Which model to use"
+)
 @click.option("encode_tokens", "--encode", is_flag=True, help="Output token integers")
 @click.option(
     "decode_tokens", "--decode", is_flag=True, help="Convert token integers to text"
@@ -55,7 +57,7 @@ def cli(
 
     To convert tokens back to text:
 
-        ttok 9906 1917 --decode
+        ttok 13225 2375 --decode
 
     To see the details of the tokens:
 

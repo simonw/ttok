@@ -9,7 +9,7 @@ Count and truncate text based on tokens
 
 ## Background
 
-Large language models such as GPT-3.5 and GPT-4 work in terms of tokens.
+Large language models such as GPT-5 work in terms of tokens.
 
 This tool can count tokens, using OpenAI's [tiktoken](https://github.com/openai/tiktoken) library.
 
@@ -53,11 +53,13 @@ To pipe in text and then append extra tokens from arguments, use the `-i -` opti
 echo -n "Hello world" | ttok more text -i -
 ```
 ```
-6
+4
 ```
 ## Different models
 
-By default, the tokenizer model for GPT-3.5 and GPT-4 is used.
+By default, the tokenizer model for GPT-5 (`o200k_base`) is used.
+
+This default changed in ttok 1.0. To use the previous GPT-3.5 and GPT-4 tokenizer (`cl100k_base`), add `--model gpt-3.5-turbo`. Token counts, truncation results and token IDs can differ between tokenizers, so use the same model when encoding and decoding tokens.
 
 To use the model for GPT-2 and GPT-3, add `--model gpt2`:
 
@@ -67,7 +69,7 @@ ttok boo Hello there this is -m gpt2
 ```
 6
 ```
-Compared to GPT-3.5:
+Compared to the default GPT-5 tokenizer:
 ```bash
 ttok boo Hello there this is
 ```
@@ -95,12 +97,12 @@ The `--encode` option can be used to view the integer token IDs for the incoming
 ttok Hello world --encode
 ```
 ```
-9906 1917
+13225 2375
 ```
 The `--decode` method reverses this process:
 
 ```bash
-ttok 9906 1917 --decode
+ttok 13225 2375 --decode
 ```
 ```
 Hello world
@@ -214,7 +216,7 @@ Usage: ttok [OPTIONS] [PROMPT]...
 
   To convert tokens back to text:
 
-      ttok 9906 1917 --decode
+      ttok 13225 2375 --decode
 
   To see the details of the tokens:
 
@@ -232,7 +234,7 @@ Options:
   --version               Show the version and exit.
   -i, --input FILENAME
   -t, --truncate INTEGER  Truncate to this many tokens
-  -m, --model TEXT        Which model to use
+  -m, --model TEXT        Which model to use  [default: gpt-5]
   --encode                Output token integers
   --decode                Convert token integers to text
   --tokens                Output full tokens
