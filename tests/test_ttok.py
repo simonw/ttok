@@ -160,8 +160,22 @@ def test_ttok_list_models():
     result = runner.invoke(cli, ["--list-models"])
     assert result.exit_code == 0
     lines = result.output.strip().split("\n")
-    assert lines == [
+    exact_models = [
         f"{model} ({encoding})"
         for model, encoding in tiktoken.model.MODEL_TO_ENCODING.items()
     ]
+    prefixes = [
+        f"{prefix}* ({encoding})"
+        for prefix, encoding in tiktoken.model.MODEL_PREFIX_TO_ENCODING.items()
+    ]
+    assert lines == (
+        exact_models
+        + ["", "Model prefixes (matched in order after exact names):"]
+        + prefixes
+    )
     assert "gpt-4o (o200k_base)" in lines
+    assert "chatgpt-4o-* (o200k_base)" in lines
+    assert "gpt-oss-* (o200k_harmony)" in lines
+    assert lines.index("ft:gpt-4o* (o200k_base)") < lines.index(
+        "ft:gpt-4* (cl100k_base)"
+    )

@@ -143,9 +143,9 @@ ttok '<|endoftext|>' --allow-special
 
 ## Available models
 
-This is the full list of available models and their corresponding encodings. Model names are valid for the `-m/--model` option.
+These are the exact model names and their corresponding encodings recognized by `tiktoken`. Model names are valid for the `-m/--model` option.
 
-Run `ttok --list-models` to see the models supported by your installed version of `tiktoken`.
+Run `ttok --list-models` to see the model names and prefixes supported by your installed version of `tiktoken`.
 
 <!-- [[[cog
 import cog
@@ -202,6 +202,35 @@ cog.out("\n".join(output))
 - `gpt-2` (`gpt2`)
 <!-- [[[end]]] -->
 
+### Model name prefixes
+
+The following prefixes are also recognized. The `*` stands for any suffix: for example, `gpt-5-mini` matches the GPT-5 prefix. Use the complete model name with `-m`. Exact names are checked first, then prefixes in the order listed. Prefix matching selects a tokenizer but does not verify that a model exists.
+
+<!-- [[[cog
+output = []
+for key, value in tiktoken.model.MODEL_PREFIX_TO_ENCODING.items():
+    output.append("- `{}*` (`{}`)".format(key, value))
+cog.out("\n".join(output))
+]]] -->
+- `o1-*` (`o200k_base`)
+- `o3-*` (`o200k_base`)
+- `o4-mini-*` (`o200k_base`)
+- `gpt-5*` (`o200k_base`)
+- `gpt-4.5-*` (`o200k_base`)
+- `gpt-4.1-*` (`o200k_base`)
+- `chatgpt-4o-*` (`o200k_base`)
+- `gpt-4o-*` (`o200k_base`)
+- `gpt-4-*` (`cl100k_base`)
+- `gpt-3.5-turbo-*` (`cl100k_base`)
+- `gpt-35-turbo-*` (`cl100k_base`)
+- `gpt-oss-*` (`o200k_harmony`)
+- `ft:gpt-4o*` (`o200k_base`)
+- `ft:gpt-4*` (`cl100k_base`)
+- `ft:gpt-3.5-turbo*` (`cl100k_base`)
+- `ft:davinci-002*` (`cl100k_base`)
+- `ft:babbage-002*` (`cl100k_base`)
+<!-- [[[end]]] -->
+
 ## ttok --help
 
 <!-- [[[cog
@@ -251,7 +280,7 @@ Usage: ttok [OPTIONS] [PROMPT]...
 
       [b'hello', b' world']
 
-  To list the available models:
+  To list model names and prefixes:
 
       ttok --list-models
 
@@ -264,7 +293,7 @@ Options:
   --decode                Convert token integers to text
   --tokens                Output full tokens
   --allow-special         Do not error on special tokens
-  --list-models           List available models and exit
+  --list-models           List model names and prefixes and exit
   --help                  Show this message and exit.
 
 ```
@@ -289,7 +318,7 @@ To run your development copy of the tool:
 uv run ttok --help
 ```
 
-The available model list and `--help` output in this README are generated using Cog. To regenerate them after making changes:
+The model names, prefixes and `--help` output in this README are generated using Cog. To regenerate them after making changes:
 
 ```bash
 uv run cog -r README.md

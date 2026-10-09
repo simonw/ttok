@@ -20,7 +20,9 @@ import tiktoken
 )
 @click.option("as_tokens", "--tokens", is_flag=True, help="Output full tokens")
 @click.option("--allow-special", is_flag=True, help="Do not error on special tokens")
-@click.option("--list-models", is_flag=True, help="List available models and exit")
+@click.option(
+    "--list-models", is_flag=True, help="List model names and prefixes and exit"
+)
 def cli(
     prompt,
     input,
@@ -67,13 +69,16 @@ def cli(
 
         [b'hello', b' world']
 
-    To list the available models:
+    To list model names and prefixes:
 
         ttok --list-models
     """
     if list_models:
         for model_name, encoding_name in tiktoken.model.MODEL_TO_ENCODING.items():
             click.echo(f"{model_name} ({encoding_name})")
+        click.echo("\nModel prefixes (matched in order after exact names):")
+        for model_prefix, encoding_name in tiktoken.model.MODEL_PREFIX_TO_ENCODING.items():
+            click.echo(f"{model_prefix}* ({encoding_name})")
         return
     if decode_tokens and encode_tokens:
         raise click.ClickException("Cannot use --decode with --encode")
