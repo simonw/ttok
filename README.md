@@ -23,9 +23,17 @@ Install this tool using `pip`:
 ```bash
 pip install ttok
 ```
+Or `uv`:
+```bash
+uv tool install ttok
+```
 Or using Homebrew:
 ```bash
 brew install simonw/llm/ttok
+```
+You can also run the tool without first installing it using `uvx`:
+```bash
+uvx ttok --help
 ```
 
 ## Counting tokens
@@ -46,6 +54,12 @@ echo -n "Hello world" | ttok
 2
 ```
 Here the `echo -n` option prevents echo from adding a newline - without that you would get a token count of 3.
+
+To read text directly from a file, use `-i` or `--input`:
+
+```bash
+ttok -i input.txt
+```
 
 To pipe in text and then append extra tokens from arguments, use the `-i -` option:
 
@@ -80,7 +94,7 @@ Further model options are [documented here](https://github.com/openai/openai-coo
 
 ## Truncating text
 
-Use the `-t 10` or `--truncate 10` option to truncate text to a specified number of tokens:
+Use the `-t 3` or `--truncate 3` option to truncate text to three tokens:
 
 ```bash
 ttok This is too many tokens -t 3
@@ -114,6 +128,17 @@ ttok Hello world --encode --tokens
 ```
 ```
 [b'Hello', b' world']
+```
+
+## Special tokens
+
+By default, special token strings such as `<|endoftext|>` cause an error. Use `--allow-special` to recognize them as special tokens when counting, truncating or encoding text:
+
+```bash
+ttok '<|endoftext|>' --allow-special
+```
+```
+1
 ```
 
 ## Available models
@@ -253,22 +278,25 @@ python -m ttok --help
 
 ## Development
 
-To contribute to this tool, first checkout the code. Then create a new virtual environment:
+To contribute to this tool, first checkout the code. Run the tests with `uv run pytest`:
 
 ```bash
 cd ttok
-python -m venv venv
-source venv/bin/activate
+uv run pytest
+```
+To run your development copy of the tool:
+```bash
+uv run ttok --help
 ```
 
-Now install the dependencies and test dependencies:
+The available model list and `--help` output in this README are generated using Cog. To regenerate them after making changes:
 
 ```bash
-pip install -e '.[test]'
+uv run cog -r README.md
 ```
 
-To run the tests:
+To check that the generated sections are up to date, as CI does:
 
 ```bash
-pytest
+uv run cog --check README.md
 ```
