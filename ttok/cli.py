@@ -12,6 +12,9 @@ import tiktoken
     "-t", "--truncate", "truncate", type=int, help="Truncate to this many tokens"
 )
 @click.option(
+    "-v", "--verbose", is_flag=True, help="Report truncation details to stderr"
+)
+@click.option(
     "-m", "--model", default="gpt-5", show_default=True, help="Which model to use"
 )
 @click.option("encode_tokens", "--encode", is_flag=True, help="Output token integers")
@@ -27,6 +30,7 @@ def cli(
     prompt,
     input,
     truncate,
+    verbose,
     model,
     encode_tokens,
     decode_tokens,
@@ -122,7 +126,14 @@ def cli(
             )
         raise click.ClickException(ex_str)
     if truncate:
+        original_count = len(tokens)
         tokens = tokens[:truncate]
+        if verbose:
+            if len(tokens) < original_count:
+                message = f"Truncated from {original_count} to {len(tokens)} tokens."
+            else:
+                message = f"No truncation: {original_count} tokens."
+            click.echo(message, err=True)
 
     if encode_tokens:
         if as_tokens:

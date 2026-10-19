@@ -103,6 +103,21 @@ ttok This is too many tokens -t 3
 This is too
 ```
 
+Add `-v` or `--verbose` to report whether text was truncated, with the token
+counts, on stderr:
+
+```bash
+ttok This is too many tokens -t 3 --verbose > truncated.txt
+```
+```text
+Truncated from 5 to 3 tokens.
+```
+
+The file contains only `This is too`. If the input fits within the limit, stderr
+reports `No truncation: N tokens.` instead. This also works with `--encode` and
+`--tokens`. Without `--verbose`, truncation remains silent; commands that do not
+truncate, such as counting or decoding tokens, do not produce this report.
+
 ## Viewing tokens
 
 The `--encode` option can be used to view the integer token IDs for the incoming text:
@@ -288,6 +303,7 @@ Options:
   --version               Show the version and exit.
   -i, --input FILENAME
   -t, --truncate INTEGER  Truncate to this many tokens
+  -v, --verbose           Report truncation details to stderr
   -m, --model TEXT        Which model to use  [default: gpt-5]
   --encode                Output token integers
   --decode                Convert token integers to text
