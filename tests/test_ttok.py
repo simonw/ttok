@@ -154,6 +154,18 @@ def test_ttok_special_tokens_count_and_truncate():
     assert result.output == "hello <|endoftext|>"
 
 
+def test_ttok_decode_invalid_token():
+    runner = CliRunner()
+    result = runner.invoke(cli, ["999999999", "--decode"])
+    assert result.exit_code != 0
+    assert "Invalid token" in result.output
+    assert "Traceback" not in result.output
+    result = runner.invoke(cli, ["999999999", "--decode", "--tokens"])
+    assert result.exit_code != 0
+    assert "Invalid token" in result.output
+    assert "Traceback" not in result.output
+
+
 def test_ttok_list_models():
     # https://github.com/simonw/ttok/issues/18
     runner = CliRunner()

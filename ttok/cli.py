@@ -100,10 +100,13 @@ def cli(
 
     if decode_tokens:
         tokens = [int(token) for token in re.findall(r"\d+", text)]
-        if as_tokens:
-            click.echo(encoding.decode_tokens_bytes(tokens))
-        else:
-            click.echo(encoding.decode(tokens))
+        try:
+            if as_tokens:
+                click.echo(encoding.decode_tokens_bytes(tokens))
+            else:
+                click.echo(encoding.decode(tokens))
+        except KeyError as ex:
+            raise click.ClickException(f"Invalid token: {ex}") from ex
         return
 
     # Tokenize it
