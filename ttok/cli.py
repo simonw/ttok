@@ -99,7 +99,16 @@ def cli(
             text = input_text
 
     if decode_tokens:
-        tokens = [int(token) for token in re.findall(r"\d+", text)]
+        tokens = [int(token) for token in re.findall(r"-?\d+", text)]
+        invalid_tokens = [
+            token for token in tokens if token < 0 or token >= encoding.n_vocab
+        ]
+        if invalid_tokens:
+            raise click.ClickException(
+                "Invalid token IDs: {}".format(
+                    ", ".join(str(token) for token in invalid_tokens)
+                )
+            )
         if as_tokens:
             click.echo(encoding.decode_tokens_bytes(tokens))
         else:
