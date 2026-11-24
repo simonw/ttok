@@ -154,6 +154,26 @@ def test_ttok_special_tokens_count_and_truncate():
     assert result.output == "hello <|endoftext|>"
 
 
+def test_ttok_decode_rejects_invalid_token_ids():
+    # https://github.com/simonw/ttok/issues/28
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--decode", "--", "-1"])
+    assert result.exit_code != 0
+    assert "Invalid token" in result.output
+    assert "-1" in result.output
+    # Mixed valid and negative tokens are rejected too
+    result = runner.invoke(cli, ["--decode", "--", "1", "-1"])
+    assert result.exit_code != 0
+    # Tokens beyond the vocabulary are rejected
+    result = runner.invoke(cli, ["--decode", "999999999999"])
+    assert result.exit_code != 0
+    assert "Invalid token" in result.output
+    # Positive tokens still decode normally
+    result = runner.invoke(cli, ["--decode", "1"])
+    assert result.exit_code == 0
+    assert result.output.strip() == '"'
+
+
 def test_ttok_list_models():
     # https://github.com/simonw/ttok/issues/18
     runner = CliRunner()
